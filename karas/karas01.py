@@ -22,3 +22,4 @@ model.fit(x,y, epochs=100)
 #평가, 예측
 print("평가: ", model.evaluate(x,y))
 print("예측: ", model.predict([4]))
+

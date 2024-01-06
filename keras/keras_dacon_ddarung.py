@@ -102,7 +102,7 @@ class Dacon_ddarung:
         plt.show()
         
     def save_file(value):
-        df = pd.DataFrame({'random_state' : [value[0]], 'r2' : [value[1]]}) 
+        df = pd.DataFrame({'random_state' : [value[0]], 'epoch' : [value[1]], 'train_size' : [value[2]], 'batch_size' : [value[3]],  'gap' : [value[4]], 'loss' : [value[5]]}) 
         # dfs = pd.DataFrame(data)
         df.to_csv(path + "random_state.csv", mode='a', index=True)
         
@@ -162,43 +162,54 @@ class Dacon_ddarung:
 
     
     random_random_state = 0
-    # while(1) :
-    random_random_state = random.randint(0,1000)
-    x_train, x_test, y_train, y_test = train_test_split(x,y, shuffle=True, train_size=0.75, random_state=0)
+    random_epoch = 0
+    random_batch_size = 0
+    random_train_size = 0.0
+    while(1) :
+        random_random_state = random.randint(0,10000000)
+        random_epoch = random.randint(50,500)
+        random_batch_size = random.randint(10,100)
+        random_train_size = round(random.uniform(0.6,0.9),2)
+        
+        x_train, x_test, y_train, y_test = train_test_split(x,y, shuffle=True, train_size=random_train_size, random_state=random_random_state)
 
-    ##################################################데이터 전처리
-    
-    # 모델구성
-    model = Sequential()
-    model.add(Dense(1, input_dim = len(x.columns)))
-    model.add(Dense(1))
-    model.add(Dense(1))
-    model.add(Dense(1))
+        ##################################################데이터 전처리
+        
+        # 모델구성
+        model = Sequential()
+        model.add(Dense(2, input_dim = len(x.columns)))
+        model.add(Dense(3))
+        model.add(Dense(4))
+        model.add(Dense(3))
+        model.add(Dense(2))
+        model.add(Dense(1))
+        
 
-    
+        #컴파일, 훈련
+        model.compile(loss='mse', optimizer='adam')
+        model.fit(x_train, y_train, epochs=random_epoch, batch_size=random_batch_size) 
+        
+        #평가 ,예측
+        loss = model.evaluate(x_test, y_test)
 
-    #컴파일, 훈련
-    model.compile(loss='mse', optimizer='adam')
-    model.fit(x_train, y_train, epochs=200, batch_size=10) 
+        y_predict = model.predict(x_test)
+        r2 = r2_score(y_test, y_predict)
+        
+        submit = model.predict([test_t])
+        
+        print('loss : ', loss)
+        print('r2 : ', r2)   
+        gap_of_loss = abs(model.evaluate(x_train,y_train) - loss)
+        print('로스 차이:', gap_of_loss)
+        
+        #sumission.csv 파일 생성
+        if loss < 2700 and gap_of_loss < 100:
+            submission_csv['count'] = submit
+            save_submission(submission_csv)
+            save_file([random_random_state, random_epoch, random_train_size, random_batch_size, gap_of_loss, loss])
+        
+        
+    # show_graph(y_test, y_predict)
     
-    #평가 ,예측
-    loss = model.evaluate(x_test, y_test)
-
-    y_predict = model.predict(x_test)
-    r2 = r2_score(y_test, y_predict)
-    
-    submit = model.predict([test_t])
-    
-    print('loss : ', loss)
-    print('r2 : ', r2)   
-    print('로스 차이:', )
-    
-    #sumission.csv 파일 생성
-    submission_csv['count'] = submit
-    save_submission(submission_csv)
-    save_file([random_random_state, r2])
-    
-    show_graph(y_test, y_predict)
-    
-            
+    #40
 

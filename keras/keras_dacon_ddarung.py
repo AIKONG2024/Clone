@@ -81,9 +81,9 @@ def auto_submit(file_path):
     from dacon_submit_api import dacon_submit_api
     result = dacon_submit_api.post_submission_file(
         file_path,
-        'fe659a916a1e7c90f38f21a116396e67921dc583af5139016d88b9d1ca49ae6b',
-        '235576',
-        '옹선응',
+        '',
+        '',
+        '',
         '자동 제출'
     )
     

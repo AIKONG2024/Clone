@@ -39,10 +39,10 @@ model.add(Dense(8))
 model.add(Dense(7, activation='softmax'))
 
 from keras.callbacks import EarlyStopping
-es = EarlyStopping(monitor='val_loss', mode='min', patience=10, restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', patience=15, restore_best_weights=True)
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'])
-history = model.fit(x_train, y_train, epochs=1, batch_size=10000, verbose= 1, validation_split=0.3, callbacks=[es])
+history = model.fit(x_train, y_train, epochs=30, batch_size=10000, verbose= 1, validation_split=0.3, callbacks=[es])
 
 loss = model.evaluate(x_test, y_test)
 y_predict = model.predict(x_test)
@@ -56,3 +56,7 @@ accu_score = accuracy_score(arg_y_test, arg_y_predict)
 print(accu_score)
 
 
+plt.figure(figsize=(9,6))
+plt.plot(history.history['val_loss'], color = 'red', label = 'val_loss', marker = '.')
+plt.plot(history.history['loss'], color = 'blue', label = 'loss', marker = '.')
+plt.show()

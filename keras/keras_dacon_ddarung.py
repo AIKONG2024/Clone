@@ -128,13 +128,23 @@ class Dacon_ddarung:
     # 2. 데이터 정규화
     #데이터 모양
     # print(train_csv.shape)  # (1459, 11)
-    # print(test_csv.shape)  # (715, 10)s
+    # print(test_csv.shape)  # (715, 10)
     # print(submission_csv.shape)  # (715, 2)
 
     #결측치 제거
     #결측치가 있는 행 제거
     # train_csv.dropna(inplace=True)
     # test_csv.dropna(inplace=True)
+    
+    print(train_csv.info())
+    print(test_csv.info())
+    print(train_csv.isna().sum())
+    print(test_csv.isna().sum())
+    
+    print(train_csv.columns)
+    print(test_csv.columns)
+    print(submission_csv.columns)
+    
     
 
     #train
@@ -219,7 +229,7 @@ class Dacon_ddarung:
         y_predict = model.predict(x_test)
         r2 = r2_score(y_test, y_predict)
         
-        submit = model.predict([test_t])
+        submit = model.predict(test_csv)
         
         print('loss : ', loss)
         print('r2 : ', r2)   
@@ -227,9 +237,8 @@ class Dacon_ddarung:
         print('로스 차이:', gap_of_loss)
         
         save_file([random_random_state, random_epoch, random_train_size, random_batch_size, gap_of_loss, loss])
-        if loss < 1700 :
-            submission_csv['count'] = submit
-            save_submission()
+        submission_csv['count'] = submit
+        save_submission()
             
         
     # show_graph(y_test, y_predict)
